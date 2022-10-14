@@ -1,3 +1,11 @@
+@@ -1,74 +1,89 @@
+from msilib.schema import File
+import requests
+from bs4 import BeautifulSoup as BS
+import sys
+sys.getdefaultencoding()
+'ascii'
+sys.getfilesystemencoding()
 'UTF-8'
 import os
 import time
@@ -18,12 +26,10 @@ def get_page(url):
     time.sleep(3)
     if(r.status_code == 200) : return BS(r.content,'html.parser')
     else : return -1
-
 if __name__=="__main__":
-
-    html = get_page('https://www.livelib.ru/reviews/~2#reviews')
+    
     url = 'https://www.livelib.ru/reviews/'
-
+    
     dataset = dict()
     zero = 0
     one = 0
@@ -31,41 +37,30 @@ if __name__=="__main__":
     three = 0
     four = 0
     five = 0
-
+    
     html = get_page(url)
-
+    
     if html == -1 : 
-        print("No connection")
-        exit()
             print("No connection")
             exit()
-
+            
     for i in range (1,9999):
         html = get_page(url+'~'+str(i)+'#reviews')
         if html == -1 : break
-
-    marks = list()
-
+        
+        
         marks = list()
-
-    for item in html.findAll('span',class_='lenta-card__mymark'):
-        marks.append(item.text.strip())
+    
         for item in html.findAll('span',class_='lenta-card__mymark'):
             marks.append(item.text.strip())
-
-    names = list()
+        
         names = list()
-
-    for item in html.findAll('a', class_='lenta-card__book-title'):
-        names.append(item.text.strip())
+    
         for item in html.findAll('a', class_='lenta-card__book-title'):
             names.append(item.text.strip())
-
-    comments = list()
+        
         comments = list()
-
-    for item in html.findAll('div',id='lenta-card__text-review-escaped'):
-        comments.append(item.text.strip())
+    
         for item in html.findAll('div',id='lenta-card__text-review-escaped'):
             comments.append(item.text.strip())
 
@@ -74,12 +69,32 @@ if __name__=="__main__":
                 {
                     names[j]:[comments[j],marks[j]]}
             )
+            condidate = {names[j]:[comments[j],marks[j]]}
+            if condidate[names[j]][1] < 1 : 
+                zero+=1
+                dataset.update(condidate)
+            elif condidate[names[j]][1] < 2 : 
+                one+=1
+                dataset.update(condidate)
+            elif condidate[names[j]][1] < 3 : 
+                two+=1
+                dataset.update(condidate)
+            elif condidate[names[j]][1] < 4 : 
+                three+=1
+                dataset.update(condidate)
+            elif condidate[names[j]][1] < 5 : 
+                four+=1
+                dataset.update(condidate)
+            elif condidate[names[j]][1] == 5 : 
+                five+=1
+                dataset.update(condidate)
 
     """
     print(marks)
     
     print(names)
-@@ -57,6 +79,8 @@ def get_page(url):
+    
+    outFile = open('output.xml', 'wb')
     for comment in comments:
         outFile.write(comment.encode('utf-8'))
         outFile.write('\n\n\n'.encode('utf-8'))
