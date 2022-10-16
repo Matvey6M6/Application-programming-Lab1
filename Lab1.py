@@ -65,7 +65,6 @@ def get_names(articles):
             names.append(name)
         except AttributeError as e:
             print("Не найдено название")
-            print(e.name)
             return -1
     return names
 
@@ -83,7 +82,6 @@ def get_comments_texts(articles):
             comments_texts.append(comment)
         except AttributeError as e:
             print("Не найден комментарий")
-            print(e.name)
             return -1
 
     return comments_texts
@@ -111,7 +109,7 @@ def parse_pages(max_num_of_requests, least_num_of_marks):
             == "Пожалуйста, подождите пару секунд, идет перенаправление на сайт..."
         ):
             print("Вылезла капча")
-            sleep(20)
+            sleep(10)
             continue
         try:
             articles = (
@@ -120,7 +118,6 @@ def parse_pages(max_num_of_requests, least_num_of_marks):
                 .find_all("article", class_="review-card lenta__item")
             )
         except AttributeError as e:
-            print(e.name)
             print('Не удалось загрузить страницу')
             continue
 
@@ -164,7 +161,7 @@ def parse_pages(max_num_of_requests, least_num_of_marks):
     return dataset
 if __name__ == "__main__":
     url = "https://www.livelib.ru/reviews/"
-    least_num_of_marks = 1000 
+    least_num_of_marks = 1000
     max_num_of_requests = 9000
     dataset = parse_pages(max_num_of_requests, least_num_of_marks)
     create_repo()
